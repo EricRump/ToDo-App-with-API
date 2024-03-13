@@ -1,0 +1,67 @@
+.open .aufgabe:has(input:checked) {
+  display: none;
+}
+
+.done .aufgabe:not(:has(input:checked)) {
+  display: none;
+}
+
+.all .aufgabe {
+  display: block;
+}
+
+body {
+  border: 100px solid green;
+  border-image: url(images/pflanzen.jpg) 100 repeat;
+  width: 70%;
+}
+
+ul {
+  list-style: none;
+}
+
+header {
+  margin: auto;
+
+  padding: 2rem;
+  text-align: center;
+  background-image: linear-gradient(to bottom, forestgreen, yellowgreen);
+}
+
+main {
+  margin: auto;
+  width: 50%;
+}
+
+.filter {
+  margin-top: 1rem;
+  display: flex;
+  background-color: whitesmoke;
+  border: 4px solid gainsboro;
+  border-radius: 1rem;
+}
+
+.hinzufügen {
+  text-align: center;
+  margin: 2rem;
+}
+
+.add {
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+
+.liste {
+  border: 30px solid blue;
+  border-image: url(images/muster.jpeg) 50 round;
+}
+
+.aufgabe {
+  margin: 1rem;
+}
+
+.removeButton {
+  margin: 1rem;
+  width: 100%;
+  height: 2rem;
+}
