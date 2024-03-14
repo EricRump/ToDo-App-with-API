@@ -8,15 +8,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Funktion zum Laden des Local Storage
 function loadFromLocalStorage() {
-  if (localStorage.getItem("todos")) {
+  fetch("http://localhost:4730/todos")
+    .then((response) => response.json())
+    .then((data) => (todos = data));
+  /*if (localStorage.getItem("todos")) {
     todos = JSON.parse(localStorage.getItem("todos"));
     renderToDos();
-  }
+  }*/
 }
 
 // Funktion zum Speichern der Todos im Local Storage
 function saveToLocalStorage() {
-  localStorage.setItem("todos", JSON.stringify(todos));
+  const input = document.querySelector(".input").value.trim();
+  const newtodo = {
+    description: "input",
+  };
+  fetch("http://localhost:4730/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newtodo),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    });
+  /*localStorage.setItem("todos", JSON.stringify(todos));*/
 }
 
 // neue ToDos mit button zum array hinzufügen
