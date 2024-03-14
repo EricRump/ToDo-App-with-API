@@ -1,16 +1,22 @@
 const add = document.querySelector(".add");
 const liste = document.querySelector(".liste");
-let todos = [{ description: "", ID: 0, done: false }];
+let todos = [];
+const api = "http://localhost:4730/todos";
 
 document.addEventListener("DOMContentLoaded", function () {
-  loadFromLocalStorage();
+  loadFromApi();
+  console.log(todos);
 });
 
 // Funktion zum Laden des Local Storage
-function loadFromLocalStorage() {
-  fetch("http://localhost:4730/todos")
+function loadFromApi() {
+  fetch(api)
     .then((response) => response.json())
-    .then((data) => (todos = data));
+    .then((data) => {
+      todos.push(...data);
+      renderToDos();
+    });
+
   /*if (localStorage.getItem("todos")) {
     todos = JSON.parse(localStorage.getItem("todos"));
     renderToDos();
@@ -18,22 +24,27 @@ function loadFromLocalStorage() {
 }
 
 // Funktion zum Speichern der Todos im Local Storage
-function saveToLocalStorage() {
-  const input = document.querySelector(".input").value.trim();
-  const newtodo = {
-    description: "input",
-  };
-  fetch("http://localhost:4730/todos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newtodo),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
+function saveToApi() {
+  fetch(api)
+    .then((response) => {
+      return response.json();
+    })
+    .then((apiTodos) => {
+      const newtodo = todos.filter((todo) => {
+        return !apiTodos
+          .values(newtodo)
+          .some((apiTodo) => apiTodo.id === todo.id);
+      });
+
+      fetch(api, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newtodo),
+      });
     });
-  /*localStorage.setItem("todos", JSON.stringify(todos));*/
 }
+
+/*localStorage.setItem("todos", JSON.stringify(todos));*/
 
 // neue ToDos mit button zum array hinzufügen
 add.addEventListener("click", addToList);
@@ -47,7 +58,6 @@ function addToList() {
     if (!existingTodo) {
       todos.push({
         description: input,
-        ID: Math.floor(Math.random() * 9999999999),
         done: false,
       });
       renderToDos();
@@ -79,7 +89,7 @@ function renderToDos() {
     listItem.appendChild(label);
     liste.appendChild(listItem);
   });
-  saveToLocalStorage();
+  saveToApi();
 }
 
 liste.addEventListener("change", function (event) {
@@ -101,7 +111,7 @@ removeButton.addEventListener("click", function () {
     }
   }
   renderToDos();
-  saveToLocalStorage();
+  saveToApi();
 });
 
 // Filter
