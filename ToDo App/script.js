@@ -1,7 +1,7 @@
 const add = document.querySelector(".add");
 const liste = document.querySelector(".liste");
 let todos = [];
-const api = "http://localhost:4730/todos";
+const api = "http://localhost:4730/todos/";
 
 document.addEventListener("DOMContentLoaded", function () {
   loadFromApi();
@@ -25,25 +25,12 @@ function loadFromApi() {
 
 // Funktion zum Speichern der Todos im Local Storage
 function saveToApi() {
-  fetch(api)
-    .then((response) => {
-      return response.json();
-    })
-    .then((apiTodos) => {
-      const newtodo = todos.filter((todo) => {
-        return !apiTodos
-          .values(newtodo)
-          .some((apiTodo) => apiTodo.id === todo.id);
-      });
-
-      fetch(api, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newtodo),
-      });
-    });
+  fetch(api, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(todos),
+  });
 }
-
 /*localStorage.setItem("todos", JSON.stringify(todos));*/
 
 // neue ToDos mit button zum array hinzufügen
