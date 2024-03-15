@@ -6,6 +6,7 @@ const api = "http://localhost:4730/todos/";
 document.addEventListener("DOMContentLoaded", function () {
   loadFromApi();
   addToList();
+  console.log(todos);
 });
 
 // Funktion zum Laden des Local Storage
@@ -78,17 +79,36 @@ function renderToDos() {
 }
 
 liste.addEventListener("change", function (event) {
-  todos = [];
-  loadFromApi();
   if (event.target.classList.contains("check")) {
-    const todoID = parseInt(event.target.dataset.id);
-    const todo = todos.find((t) => t.ID === todoID);
-    todo.done = event.target.checked;
-    fetch(api + todo.id, {
-      method: "PUT",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(todo),
-    });
+    const todoDescription = event.target.dataset.description;
+    const todo = todos.find((t) => t.description === todoDescription);
+
+    if (todo) {
+      todo.done = event.target.checked;
+
+      fetch(api + todo.id, {
+        method: "PUT",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(todo),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to update todo on the server");
+          }
+          console.log("Todo successfully updated on the server.");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      console.error(
+        "Todo with description " +
+          todoDescription +
+          " not found in the todos array."
+      );
+    }
+  } else {
+    console.log("dadadam");
   }
 });
 
