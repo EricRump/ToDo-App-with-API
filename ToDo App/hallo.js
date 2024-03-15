@@ -5,7 +5,7 @@ const api = "http://localhost:4730/todos/";
 
 document.addEventListener("DOMContentLoaded", function () {
   loadFromApi();
-  addToList();
+  console.log(todos);
 });
 
 // Funktion zum Laden des Local Storage
@@ -16,6 +16,11 @@ function loadFromApi() {
       todos.push(...data);
       renderToDos();
     });
+
+  /*if (localStorage.getItem("todos")) {
+    todos = JSON.parse(localStorage.getItem("todos"));
+    renderToDos();
+  }*/
 }
 
 // Funktion zum Speichern der Todos im Local Storage
@@ -26,7 +31,7 @@ function saveToApi() {
       newtodo.push(todo);
     }
   });
-  if (newtodo.length > 0) {
+  if (newtodo != []) {
     fetch(api, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -35,22 +40,28 @@ function saveToApi() {
   }
   newtodo = [];
 }
+/*localStorage.setItem("todos", JSON.stringify(todos));*/
 
 // neue ToDos mit button zum array hinzufügen
 add.addEventListener("click", addToList);
 
 function addToList() {
-  const input = document.querySelector(".input").value;
+  const input = document.querySelector(".input").value.trim();
   if (input !== "") {
-    todos.push({
-      description: input,
-      done: false,
-    });
-    renderToDos();
-    document.querySelector(".input").value = "";
-    document.querySelector(".input").focus();
-  } else {
-    console.log("Das Element ist bereits in der Liste vorhanden.");
+    const existingTodo = todos.find(
+      (todo) => todo.description.toLowerCase() === input.toLowerCase()
+    );
+    if (!existingTodo) {
+      todos.push({
+        description: input,
+        done: false,
+      });
+      renderToDos();
+      document.querySelector(".input").value = "";
+      document.querySelector(".input").focus();
+    } else {
+      console.log("Das Element ist bereits in der Liste vorhanden.");
+    }
   }
 }
 
@@ -67,28 +78,22 @@ function renderToDos() {
     checkbox.dataset.id = todo.ID;
     checkbox.checked = todo.done;
 
-    const span = document.createElement("span");
-    span.textContent = todo.description;
+    const label = document.createElement("label");
+    label.textContent = todo.description;
 
     listItem.appendChild(checkbox);
-    listItem.appendChild(span);
+    listItem.appendChild(label);
     liste.appendChild(listItem);
   });
   saveToApi();
 }
 
 liste.addEventListener("change", function (event) {
-  todos = [];
-  loadFromApi();
   if (event.target.classList.contains("check")) {
-    const todoID = parseInt(event.target.dataset.id);
-    const todo = todos.find((t) => t.ID === todoID);
+    const tododescription = parseInt(event.target.dataset.description);
+    const todo = todos.find((t) => t.description === tododescription);
     todo.done = event.target.checked;
-    fetch(api + todo.id, {
-      method: "PUT",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(todo),
-    });
+    saveToLocalStorage();
   }
 });
 
@@ -99,9 +104,6 @@ removeButton.addEventListener("click", function () {
     const todo = todos[i];
     if (todo.done === true) {
       todos.splice(i, 1);
-      fetch(api / todo[i].id, {
-        method: "DELETE",
-      });
     }
   }
   renderToDos();
