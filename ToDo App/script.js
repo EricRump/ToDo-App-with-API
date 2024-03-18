@@ -65,7 +65,7 @@ function renderToDos() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.classList.add("check");
-    checkbox.dataset.id = todo.ID;
+    checkbox.dataset.id = todo.id;
     checkbox.checked = todo.done;
 
     const span = document.createElement("span");
@@ -80,13 +80,13 @@ function renderToDos() {
 
 liste.addEventListener("change", function (event) {
   if (event.target.classList.contains("check")) {
-    const todoDescription = event.target.dataset.description;
-    const todo = todos.find((t) => t.description === todoDescription);
+    const todoid = parseInt(event.target.dataset.id);
+    const todo = todos.find((t) => t.id === todoid);
 
     if (todo) {
       todo.done = event.target.checked;
 
-      fetch(api + todo.id, {
+      fetch(api + todoid, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify(todo),
@@ -96,15 +96,14 @@ liste.addEventListener("change", function (event) {
             throw new Error("Failed to update todo on the server");
           }
           console.log("Todo successfully updated on the server.");
+          console.log(todos);
         })
         .catch((error) => {
           console.error("Error:", error);
         });
     } else {
       console.error(
-        "Todo with description " +
-          todoDescription +
-          " not found in the todos array."
+        "Todo with id " + todoid + " not found in the todos array."
       );
     }
   } else {
@@ -119,7 +118,7 @@ removeButton.addEventListener("click", function () {
     const todo = todos[i];
     if (todo.done === true) {
       todos.splice(i, 1);
-      fetch(api / todo[i].id, {
+      fetch(api + todo.id, {
         method: "DELETE",
       });
     }
