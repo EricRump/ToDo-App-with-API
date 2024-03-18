@@ -1,6 +1,7 @@
 const add = document.querySelector(".add");
 const liste = document.querySelector(".liste");
 let todos = [];
+let newtodo = [];
 const api = "http://localhost:4730/todos/";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -21,12 +22,6 @@ function loadFromApi() {
 
 // Funktion zum Speichern der Todos im Local Storage
 function saveToApi() {
-  let newtodo = [];
-  todos.forEach((todo) => {
-    if (!todo.hasOwnProperty("id") && todo.description != "") {
-      newtodo.push(todo);
-    }
-  });
   if (newtodo.length > 0) {
     fetch(api, {
       method: "POST",
@@ -47,9 +42,14 @@ function addToList() {
       description: input,
       done: false,
     });
+    newtodo.push({
+      description: input,
+      done: false,
+    });
     renderToDos();
     document.querySelector(".input").value = "";
     document.querySelector(".input").focus();
+    location.reload();
   } else {
     console.log("Das Element ist bereits in der Liste vorhanden.");
   }
