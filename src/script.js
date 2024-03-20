@@ -61,6 +61,7 @@ function renderToDos() {
 
   todos.forEach(function (todo) {
     const listItem = document.createElement("li");
+    listItem.setAttribute("data-cy", "li");
     listItem.classList.add("aufgabe");
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
